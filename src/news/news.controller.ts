@@ -7,8 +7,7 @@ export class NewsController {
 
   @Get('/:id')
   get(@Param('id') id: string): News {
-    const idInt = parseInt(id);
-    return this.newsService.find(idInt);
+    return this.newsService.find(id);
   }
 
   @Post()
@@ -18,8 +17,7 @@ export class NewsController {
 
   @Delete('/:id')
   remove(@Param('id') id: string): string {
-    const idInt = parseInt(id);
-    const isRemoved = this.newsService.remove(idInt);
+    const isRemoved = this.newsService.remove(id);
     return isRemoved ? 'Новость удалена' : 'Передан неверный ин';
   }
 }

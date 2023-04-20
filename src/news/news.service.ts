@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
+import { v4 as uuid } from 'uuid';
 
 export interface News {
-  id: number;
+  id?: string;
   title: string;
   description: string;
   author: string;
@@ -12,7 +13,7 @@ export interface News {
 export class NewsService {
   private readonly news: News[] = [
     {
-      id: 1,
+      id: uuid(),
       title: 'One news',
       description: 'Its a one news',
       author: 'Boris',
@@ -21,7 +22,9 @@ export class NewsService {
   ];
 
   create(news: News): News {
-    this.news.push(news);
+    const id: string = uuid();
+    console.log(id);
+    this.news.push({ ...news, id: id });
     return news;
   }
 
