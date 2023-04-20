@@ -9,11 +9,18 @@ export interface News {
   countView?: number;
 }
 
+export interface NewsEdit {
+  title?: string;
+  description?: string;
+  author?: string;
+  countView?: number;
+}
+
 @Injectable()
 export class NewsService {
   private readonly news: News[] = [
     {
-      id: uuid(),
+      id: 'testid',
       title: 'One news',
       description: 'Its a one news',
       author: 'Boris',
@@ -30,6 +37,18 @@ export class NewsService {
 
   find(id: News['id']): News | undefined {
     return this.news.find((news: News) => news.id === id);
+  }
+
+  edit(id: string, news: NewsEdit): News | undefined {
+    const indexEditableNews = this.news.findIndex((news) => news.id === id);
+    if (indexEditableNews !== -1) {
+      this.news[indexEditableNews] = {
+        ...this.news[indexEditableNews],
+        ...news,
+      };
+      return this.news[indexEditableNews];
+    }
+    return undefined;
   }
 
   remove(id: News['id']): boolean {
