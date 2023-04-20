@@ -28,4 +28,13 @@ export class NewsService {
   find(id: News['id']): News | undefined {
     return this.news.find((news: News) => news.id === id);
   }
+
+  remove(id: News['id']): boolean {
+    const indexRemoveNews = this.news.findIndex((news) => news.id === id);
+    if (indexRemoveNews !== -1) {
+      this.news.splice(indexRemoveNews, 1);
+      return true;
+    }
+    return false;
+  }
 }
