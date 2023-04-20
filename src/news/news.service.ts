@@ -39,6 +39,10 @@ export class NewsService {
     return this.news.find((news: News) => news.id === id);
   }
 
+  getAll(): News[] | undefined {
+    return this.news;
+  }
+
   edit(id: string, news: NewsEdit): News | undefined {
     const indexEditableNews = this.news.findIndex((news) => news.id === id);
     if (indexEditableNews !== -1) {

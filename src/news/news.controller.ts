@@ -13,6 +13,11 @@ import { NewsEdit, News, NewsService } from './news.service';
 export class NewsController {
   constructor(private readonly newsService: NewsService) {}
 
+  @Get('/all')
+  getAll(): News[] {
+    return this.newsService.getAll();
+  }
+
   @Get('/:id')
   get(@Param('id') id: string): News {
     return this.newsService.find(id);
