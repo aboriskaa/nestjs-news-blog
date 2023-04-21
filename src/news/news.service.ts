@@ -9,6 +9,7 @@ export interface News {
   author: string;
   countView?: number;
   comments?: Comment[];
+  cover?: string;
 }
 
 export interface NewsEdit {
@@ -27,6 +28,8 @@ export class NewsService {
       description: 'Its a one news',
       author: 'Boris',
       countView: 12,
+      cover:
+        'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS0IpVu979gZT8HBx7AoO5v_WPiVcBY829MmpSKShS0&s',
     },
   ];
 
