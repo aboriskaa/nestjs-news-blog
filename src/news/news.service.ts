@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { v4 as uuid } from 'uuid';
+import { Comment } from './comments/comments.service';
 
 export interface News {
   id?: string;
@@ -7,6 +8,7 @@ export interface News {
   description: string;
   author: string;
   countView?: number;
+  comments?: Comment[];
 }
 
 export interface NewsEdit {

@@ -7,11 +7,16 @@ import {
   Delete,
   Put,
 } from '@nestjs/common';
+
 import { NewsEdit, News, NewsService } from './news.service';
+import { CommentsService } from './comments/comments.service';
 
 @Controller('news')
 export class NewsController {
-  constructor(private readonly newsService: NewsService) {}
+  constructor(
+    private readonly newsService: NewsService,
+    private readonly commentsService: CommentsService,
+  ) {}
 
   @Get('/all')
   getAll(): News[] {
@@ -20,7 +25,13 @@ export class NewsController {
 
   @Get('/:id')
   get(@Param('id') id: string): News {
-    return this.newsService.find(id);
+    const news = this.newsService.find(id);
+    const comments = this.commentsService.find(id);
+
+    return {
+      ...news,
+      comments,
+    };
   }
 
   @Post()
