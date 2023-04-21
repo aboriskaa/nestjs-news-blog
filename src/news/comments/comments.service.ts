@@ -23,4 +23,18 @@ export class CommentsService {
   find(idNews: string): Comment[] | undefined {
     return this.comments[idNews] || undefined;
   }
+
+  remove(idNews: string, idComment: string): Comment[] | null {
+    if (!this.comments[idNews]) {
+      return null;
+    }
+    const indexComment = this.comments[idNews].findIndex(
+      (c: any) => c.id === idComment,
+    );
+
+    if (indexComment === -1) {
+      return null;
+    }
+    return this.comments[idNews].splice(indexComment, 1);
+  }
 }
