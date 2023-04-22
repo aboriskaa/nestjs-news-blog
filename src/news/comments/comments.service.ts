@@ -7,6 +7,12 @@ export type Comment = {
   author: string;
 };
 
+export type CommentEdit = {
+  id?: string;
+  message?: string;
+  author?: string;
+};
+
 @Injectable()
 export class CommentsService {
   private readonly comments = {};
@@ -18,6 +24,20 @@ export class CommentsService {
     const id: string = uuid();
     this.comments[idNews].push({ ...comment, id: id });
     return comment;
+  }
+
+  edit(idNews: string, idComment: string, comment: Comment) {
+    const indexComment =
+      this.comments[idNews].findIndex((c: any) => c.id === idComment) === -1;
+    if (!this.comments[idNews] || indexComment) {
+      return false;
+    }
+
+    this.comments[idNews][indexComment] = {
+      ...this.comments[idNews][indexComment],
+      comment,
+    };
+    return 'Comment was edited';
   }
 
   find(idNews: string): Comment[] | undefined {

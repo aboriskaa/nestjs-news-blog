@@ -6,12 +6,14 @@ import {
   Body,
   Delete,
   Put,
+  Res,
 } from '@nestjs/common';
 
 import { NewsEdit, News, NewsService } from './news.service';
 import { CommentsService } from './comments/comments.service';
 import { renderNewsAll } from 'src/views/news/news-all';
 import { renderTemplate } from 'src/views/template';
+import { renderNewsDetail } from 'src/views/news/news-detail';
 
 @Controller('news')
 export class NewsController {
@@ -27,6 +29,21 @@ export class NewsController {
     return renderTemplate(content, {
       title: 'List news',
       description: 'Cool news',
+    });
+  }
+
+  @Get('/:id')
+  getDetailView(@Param('id') id: string) {
+    const news = this.newsService.find(id);
+
+    const comments = this.commentsService.find(id);
+    if (!news) {
+      // res.redirect('/all');
+    }
+    const content = renderNewsDetail(news, comments);
+    return renderTemplate(content, {
+      title: news.title,
+      description: news.description,
     });
   }
 

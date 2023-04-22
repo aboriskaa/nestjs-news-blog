@@ -5,9 +5,12 @@ export function renderNewsAll(news: News[]): string {
   for (const newsItem of news) {
     newsListHtml += renderNewsBlock(newsItem);
   }
-  return `<h1>News list</h1>
+  return `
+  <div class="container">
+  <h1>News list</h1>
   <div class="row">
   ${newsListHtml}
+  </div>
   </div>
   `;
 }
