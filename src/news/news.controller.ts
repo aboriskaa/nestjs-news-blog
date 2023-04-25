@@ -8,6 +8,8 @@ import {
   Put,
   UseInterceptors,
   UploadedFile,
+  HttpException,
+  HttpStatus,
 } from '@nestjs/common';
 
 import { News, NewsService } from './news.service';
@@ -22,7 +24,8 @@ import { diskStorage } from 'multer';
 import { HelperFileLoader } from 'src/utils/HelperFileLoader';
 
 const PATH_NEWS = '/news-static/';
-HelperFileLoader.path = PATH_NEWS;
+const helperFileLoaderNews = new HelperFileLoader();
+helperFileLoaderNews.path = PATH_NEWS;
 
 @Controller('news')
 export class NewsController {
@@ -76,8 +79,8 @@ export class NewsController {
   @UseInterceptors(
     FileInterceptor('cover', {
       storage: diskStorage({
-        destination: HelperFileLoader.destinationPath,
-        filename: HelperFileLoader.customFileName,
+        destination: helperFileLoaderNews.destinationPath,
+        filename: helperFileLoaderNews.customFileName,
       }),
     }),
   )
@@ -88,7 +91,13 @@ export class NewsController {
     const fileExtension = cover.originalname.split('.').reverse()[0];
 
     if (!fileExtension || !fileExtension.match(/(jpg|jpeg|png|gif)$/)) {
-      callback(new Error('Excepted image'), false);
+      throw new HttpException(
+        {
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          error: 'Not correct data format',
+        },
+        HttpStatus.BAD_REQUEST,
+      );
     }
 
     if (cover?.filename) {

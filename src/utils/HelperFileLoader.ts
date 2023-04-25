@@ -4,17 +4,18 @@ const publicPath = './public';
 let path: string = publicPath;
 
 export class HelperFileLoader {
-  static set path(_path: string) {
-    path = publicPath + _path;
-  }
+  path: string;
+  // static set path(_path: string) {
+  //   path = publicPath + _path;
+  // }
 
-  public static customFileName(req, file, cb) {
+  public customFileName(req, file, cb) {
     const originalName = file.originalname.split('.');
     const fileExtension = originalName[originalName.length - 1];
     cb(null, `${uuidv4()}.${fileExtension}`);
   }
 
-  public static destinationPath(req, file, cb) {
+  public destinationPath(req, file, cb) {
     cb(null, path);
   }
 }

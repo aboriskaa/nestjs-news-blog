@@ -17,7 +17,8 @@ import { diskStorage } from 'multer';
 import { HelperFileLoader } from 'src/utils/HelperFileLoader';
 
 const PATH_COMMENTS = '/news-static/comments/';
-HelperFileLoader.path = PATH_COMMENTS;
+const helperFileLoaderComments = new HelperFileLoader();
+helperFileLoaderComments.path = PATH_COMMENTS;
 
 @Controller('comments')
 export class CommentsController {
@@ -27,8 +28,8 @@ export class CommentsController {
   @UseInterceptors(
     FileInterceptor('avatar', {
       storage: diskStorage({
-        destination: HelperFileLoader.destinationPath,
-        filename: HelperFileLoader.customFileName,
+        destination: helperFileLoaderComments.destinationPath,
+        filename: helperFileLoaderComments.customFileName,
       }),
     }),
   )
