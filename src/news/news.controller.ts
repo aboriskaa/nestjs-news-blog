@@ -85,6 +85,12 @@ export class NewsController {
     @Body() news: CreateNewsDto,
     @UploadedFile() cover: Express.Multer.File,
   ): News {
+    const fileExtension = cover.originalname.split('.').reverse()[0];
+
+    if (!fileExtension || !fileExtension.match(/(jpg|jpeg|png|gif)$/)) {
+      callback(new Error('Excepted image'), false);
+    }
+
     if (cover?.filename) {
       news.cover = PATH_NEWS + cover.filename;
     }

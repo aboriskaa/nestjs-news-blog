@@ -1,5 +1,4 @@
 import { News } from 'src/news/news.service';
-import { Comment } from 'src/news/comments/comments.service';
 import { CreateCommentDto } from 'src/news/comments/dtos/create-comment-dto';
 
 export function renderNewsDetail(
