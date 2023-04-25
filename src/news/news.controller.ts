@@ -24,8 +24,7 @@ import { diskStorage } from 'multer';
 import { HelperFileLoader } from 'src/utils/HelperFileLoader';
 
 const PATH_NEWS = '/news-static/';
-const helperFileLoaderNews = new HelperFileLoader();
-helperFileLoaderNews.path = PATH_NEWS;
+HelperFileLoader.path = PATH_NEWS;
 
 @Controller('news')
 export class NewsController {
@@ -79,8 +78,8 @@ export class NewsController {
   @UseInterceptors(
     FileInterceptor('cover', {
       storage: diskStorage({
-        destination: helperFileLoaderNews.destinationPath,
-        filename: helperFileLoaderNews.customFileName,
+        destination: HelperFileLoader.destinationPath,
+        filename: HelperFileLoader.customFileName,
       }),
     }),
   )
