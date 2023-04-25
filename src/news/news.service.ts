@@ -17,6 +17,7 @@ export interface NewsEdit {
   description?: string;
   author?: string;
   countView?: number;
+  cover?: string;
 }
 
 @Injectable()
@@ -36,8 +37,9 @@ export class NewsService {
   create(news: News): News {
     const id: string = uuid();
     console.log(id);
-    this.news.push({ ...news, id: id });
-    return news;
+    const newNews = { ...news, id: id };
+    this.news.push(newNews);
+    return newNews;
   }
 
   find(id: News['id']): News | undefined {

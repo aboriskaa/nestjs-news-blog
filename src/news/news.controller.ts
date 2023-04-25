@@ -10,7 +10,7 @@ import {
   UploadedFile,
 } from '@nestjs/common';
 
-import { NewsEdit, News, NewsService } from './news.service';
+import { News, NewsService } from './news.service';
 import { CommentsService } from './comments/comments.service';
 import { renderNewsAll } from 'src/views/news/news-all';
 import { renderTemplate } from 'src/views/template';
