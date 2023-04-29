@@ -13,6 +13,12 @@ export class AppController {
   @Get()
   @Render('index')
   root() {
-    return { message: 'Hello world!' };
+    return {
+      messages: [
+        { message: 'Hello!', author: 'Boris' },
+        { message: 'Hello!', author: 'Boris2' },
+      ],
+      name: 'Borika',
+    };
   }
 }

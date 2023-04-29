@@ -10,11 +10,11 @@ import {
   UploadedFile,
   HttpException,
   HttpStatus,
+  Render,
 } from '@nestjs/common';
 
 import { News, NewsService } from './news.service';
 import { CommentsService } from './comments/comments.service';
-import { renderNewsAll } from 'src/views/news/news-all';
 import { renderTemplate } from 'src/views/template';
 import { renderNewsDetail } from 'src/views/news/news-detail';
 import { CreateNewsDto } from './dtos/create-news-dto';
@@ -22,6 +22,7 @@ import { EditNewsDto } from './dtos/edit-news-dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { HelperFileLoader } from 'src/utils/HelperFileLoader';
+import { MailService } from 'src/mail/mail.service';
 
 const PATH_NEWS = '/news-static/';
 HelperFileLoader.path = PATH_NEWS;
@@ -31,16 +32,20 @@ export class NewsController {
   constructor(
     private readonly newsService: NewsService,
     private readonly commentsService: CommentsService,
+    private mailService: MailService,
   ) {}
 
   @Get('/all')
+  @Render('news-list')
   getAllView() {
     const news = this.newsService.getAll();
-    const content = renderNewsAll(news);
-    return renderTemplate(content, {
-      title: 'List news',
-      description: 'Cool news',
-    });
+    return { news, title: 'List of news' };
+  }
+
+  @Get('/create/news')
+  @Render('create-news')
+  async createView() {
+    return {};
   }
 
   @Get('/:id')
@@ -83,10 +88,10 @@ export class NewsController {
       }),
     }),
   )
-  create(
+  async create(
     @Body() news: CreateNewsDto,
     @UploadedFile() cover: Express.Multer.File,
-  ): News {
+  ) {
     const fileExtension = cover.originalname.split('.').reverse()[0];
 
     if (!fileExtension || !fileExtension.match(/(jpg|jpeg|png|gif)$/)) {
@@ -98,11 +103,17 @@ export class NewsController {
         HttpStatus.BAD_REQUEST,
       );
     }
-
+    const coverPath = undefined;
     if (cover?.filename) {
       news.cover = PATH_NEWS + cover.filename;
     }
-    return this.newsService.create(news);
+
+    const _news = this.newsService.create({ ...news, cover: coverPath });
+    await this.mailService.sendNewNewsForAdmins(
+      ['snezhkinv@yandex.ru', 'snezhkinv20@gmail.com'],
+      _news,
+    );
+    return _news;
   }
 
   @Put('/api/:id')
