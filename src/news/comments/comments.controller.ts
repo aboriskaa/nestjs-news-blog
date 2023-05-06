@@ -16,7 +16,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { HelperFileLoader } from 'src/utils/HelperFileLoader';
 
-const PATH_COMMENTS = '/news-static/comments/';
+const PATH_COMMENTS = '/news-static/';
 HelperFileLoader.path = PATH_COMMENTS;
 
 @Controller('comments')
