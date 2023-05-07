@@ -12,11 +12,6 @@ export class EditNewsDto {
   description: string;
 
   @IsNotEmpty()
-  @IsString()
-  @ValidateIf((o) => o.author)
-  author: string;
-
-  @IsNotEmpty()
   @IsNumber()
   @ValidateIf((o) => o.countView && o.countView === '')
   countView: number;

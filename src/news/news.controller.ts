@@ -23,6 +23,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { HelperFileLoader } from 'src/utils/HelperFileLoader';
 import { MailService } from 'src/mail/mail.service';
+import { NewsEntity } from './news.entity';
 
 const PATH_NEWS = '/news-static/';
 HelperFileLoader.path = PATH_NEWS;
@@ -91,7 +92,7 @@ export class NewsController {
   async create(
     @Body() news: CreateNewsDto,
     @UploadedFile() cover: Express.Multer.File,
-  ) {
+  ): Promise<NewsEntity> {
     const fileExtension = cover.originalname.split('.').reverse()[0];
 
     if (!fileExtension || !fileExtension.match(/(jpg|jpeg|png|gif)$/)) {
@@ -108,11 +109,11 @@ export class NewsController {
       news.cover = PATH_NEWS + cover.filename;
     }
 
-    const _news = this.newsService.create({ ...news, cover: coverPath });
-    await this.mailService.sendNewNewsForAdmins(
-      ['snezhkinv@yandex.ru', 'snezhkinv20@gmail.com'],
-      _news,
-    );
+    const _news = await this.newsService.create({ ...news, cover: coverPath });
+    // await this.mailService.sendNewNewsForAdmins(
+    //   ['snezhkinv@yandex.ru', 'snezhkinv20@gmail.com'],
+    //   _news,
+    // );
     return _news;
   }
 

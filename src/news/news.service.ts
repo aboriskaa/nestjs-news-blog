@@ -1,12 +1,15 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { v4 as uuid } from 'uuid';
 import { Comment } from './comments/comments.service';
+import { NewsEntity } from './news.entity';
 
 export interface News {
   id?: string;
   title: string;
   description: string;
-  author: string;
+  author?: string;
   countView?: number;
   comments?: Comment[];
   cover?: string;
@@ -22,6 +25,11 @@ export interface NewsEdit {
 
 @Injectable()
 export class NewsService {
+  constructor(
+    @InjectRepository(NewsEntity)
+    private newsRepository: Repository<NewsEntity>,
+  ) {}
+
   private readonly news: News[] = [
     {
       id: 'testid',
@@ -34,12 +42,12 @@ export class NewsService {
     },
   ];
 
-  create(news: News): News {
-    const id: string = uuid();
-    console.log(id);
-    const newNews = { ...news, id: id };
-    this.news.push(newNews);
-    return newNews;
+  async create(news: News): Promise<NewsEntity> {
+    const newsEntity = new NewsEntity();
+    newsEntity.title = news.title;
+    newsEntity.description = news.description;
+    newsEntity.cover = news.cover;
+    return this.newsRepository.save(newsEntity);
   }
 
   find(id: News['id']): News | undefined {
