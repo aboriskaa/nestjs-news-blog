@@ -13,10 +13,8 @@ import {
   Render,
 } from '@nestjs/common';
 
-import { News, NewsService } from './news.service';
+import { NewsService } from './news.service';
 import { CommentsService } from './comments/comments.service';
-import { renderTemplate } from 'src/views/template';
-import { renderNewsDetail } from 'src/views/news/news-detail';
 import { CreateNewsDto } from './dtos/create-news-dto';
 import { EditNewsDto } from './dtos/edit-news-dto';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -50,34 +48,39 @@ export class NewsController {
   }
 
   @Get('/:id')
-  getDetailView(@Param('id') id: string) {
-    const news = this.newsService.find(id);
-
-    const comments = this.commentsService.find(id);
+  @Render('news-detail')
+  async getDetailView(@Param('id') id: string) {
+    const idInt = parseInt(id);
+    const news = await this.newsService.findById(idInt);
     if (!news) {
-      // res.redirect('/all');
+      throw new HttpException(
+        { status: HttpStatus.NOT_FOUND, error: 'News wasnt found' },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
-    const content = renderNewsDetail(news, comments);
-    return renderTemplate(content, {
-      title: news.title,
-      description: news.description,
-    });
+    const comments = this.commentsService.find(id);
+    return {
+      news,
+      comments,
+    };
   }
 
   @Get('/api/all')
-  getAll(): News[] {
+  async getAll(): Promise<NewsEntity[]> {
     return this.newsService.getAll();
   }
 
   @Get('/api/:id')
-  get(@Param('id') id: string): News {
-    const news = this.newsService.find(id);
-    const comments = this.commentsService.find(id);
-
-    return {
-      ...news,
-      comments,
-    };
+  async get(@Param('id') id: string): Promise<NewsEntity> {
+    const idInt = parseInt(id);
+    const news = this.newsService.findById(idInt);
+    if (!news) {
+      throw new HttpException(
+        { status: HttpStatus.NOT_FOUND, error: 'News wasnt found' },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+    return news;
   }
 
   @Post('/api')
@@ -118,13 +121,25 @@ export class NewsController {
   }
 
   @Put('/api/:id')
-  edit(@Param('id') id: string, @Body() news: EditNewsDto): News {
-    return this.newsService.edit(id, news);
+  async edit(
+    @Param('id') id: string,
+    @Body() news: EditNewsDto,
+  ): Promise<NewsEntity> {
+    const idInt = parseInt(id);
+
+    if (!news) {
+      throw new HttpException(
+        { status: HttpStatus.NOT_FOUND, error: 'News wasnt found' },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+    const newsEditable = await this.newsService.edit(idInt, news);
+    return newsEditable;
   }
 
   @Delete('/api/:id')
-  remove(@Param('id') id: string): string {
-    const isRemoved = this.newsService.remove(id);
-    return isRemoved ? 'Новость удалена' : 'Передан неверный ин';
+  async remove(@Param('id') id: string): Promise<string> {
+    const idInt = parseInt(id);
+    return this.newsService.remove(idInt);
   }
 }

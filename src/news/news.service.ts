@@ -30,18 +30,6 @@ export class NewsService {
     private newsRepository: Repository<NewsEntity>,
   ) {}
 
-  private readonly news: News[] = [
-    {
-      id: 'testid',
-      title: 'One news',
-      description: 'Its a one news',
-      author: 'Boris',
-      countView: 12,
-      cover:
-        'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS0IpVu979gZT8HBx7AoO5v_WPiVcBY829MmpSKShS0&s',
-    },
-  ];
-
   async create(news: News): Promise<NewsEntity> {
     const newsEntity = new NewsEntity();
     newsEntity.title = news.title;
@@ -50,32 +38,32 @@ export class NewsService {
     return this.newsRepository.save(newsEntity);
   }
 
-  find(id: News['id']): News | undefined {
-    return this.news.find((news: News) => news.id === id);
+  async findById(id: any): Promise<NewsEntity> {
+    return this.newsRepository.findOne(id);
   }
 
-  getAll(): News[] | [] {
-    return this.news.length ? this.news : [];
+  async getAll(): Promise<NewsEntity[]> {
+    return this.newsRepository.find({});
   }
 
-  edit(id: string, news: NewsEdit): News | undefined {
-    const indexEditableNews = this.news.findIndex((news) => news.id === id);
-    if (indexEditableNews !== -1) {
-      this.news[indexEditableNews] = {
-        ...this.news[indexEditableNews],
-        ...news,
-      };
-      return this.news[indexEditableNews];
+  async edit(id: number, news: NewsEdit): Promise<NewsEntity | null> {
+    const editableNews = await this.findById(id);
+    if (editableNews) {
+      const newNewsEntity = new NewsEntity();
+      newNewsEntity.description = news.description || editableNews.description;
+      newNewsEntity.title = news.title || editableNews.title;
+      newNewsEntity.cover = news.cover || editableNews.cover;
+
+      return this.newsRepository.save(newNewsEntity);
     }
-    return undefined;
+    return null;
   }
 
-  remove(id: News['id']): boolean {
-    const indexRemoveNews = this.news.findIndex((news) => news.id === id);
-    if (indexRemoveNews !== -1) {
-      this.news.splice(indexRemoveNews, 1);
-      return true;
+  async remove(id: any): Promise<NewsEntity | null> {
+    const removeNews = await this.findById(id);
+    if (removeNews) {
+      return this.newsRepository.remove(removeNews);
     }
-    return false;
+    return null;
   }
 }
