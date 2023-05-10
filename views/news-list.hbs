@@ -2,7 +2,7 @@
   <div class='row'>
     {{#each news}}
       <div class='col-lg-6'>
-        <div class='card'>
+        <div class='card' onClick='window.location.href ="/news/all/{{this.id}}"'>
           <img
             src='http://localhost:3000{{this.cover}}'
             class='card-img-top'

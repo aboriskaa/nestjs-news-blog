@@ -11,6 +11,7 @@ import {
   HttpException,
   HttpStatus,
   Render,
+  ParseIntPipe,
 } from '@nestjs/common';
 
 import { NewsService } from './news.service';
@@ -36,8 +37,8 @@ export class NewsController {
 
   @Get('/all')
   @Render('news-list')
-  getAllView() {
-    const news = this.newsService.getAll();
+  async getAllView() {
+    const news = await this.newsService.getAll();
     return { news, title: 'List of news' };
   }
 
@@ -49,19 +50,18 @@ export class NewsController {
 
   @Get('/:id')
   @Render('news-detail')
-  async getDetailView(@Param('id') id: string) {
-    const idInt = parseInt(id);
-    const news = await this.newsService.findById(idInt);
+  async getDetailView(@Param('id', ParseIntPipe) id: number) {
+    const news = await this.newsService.findById(id);
     if (!news) {
       throw new HttpException(
         { status: HttpStatus.NOT_FOUND, error: 'News wasnt found' },
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
-    const comments = this.commentsService.find(id);
+    // const comments = this.commentsService.find(id);
     return {
       news,
-      comments,
+      comments: [],
     };
   }
 
@@ -140,6 +140,14 @@ export class NewsController {
   @Delete('/api/:id')
   async remove(@Param('id') id: string): Promise<string> {
     const idInt = parseInt(id);
-    return this.newsService.remove(idInt);
+    const isRemoved = await this.newsService.remove(idInt);
+
+    throw new HttpException(
+      {
+        status: HttpStatus.OK,
+        error: isRemoved ? 'News was deleted' : 'Incorrect id',
+      },
+      HttpStatus.OK,
+    );
   }
 }
