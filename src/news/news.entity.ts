@@ -7,7 +7,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-// import { UsersEntity } from '../users/users.entity';
+import { UsersEntity } from '../users/users.entity';
 // import { CommentsEntity } from './comments/comments.entity';
 // import { ApiProperty } from '@nestjs/swagger';
 
@@ -42,8 +42,8 @@ export class NewsEntity {
   @Column('text', { nullable: true })
   cover: string;
 
-  //   @ManyToOne(() => UsersEntity, (user) => user.news)
-  //   user: UsersEntity;
+  @ManyToOne(() => UsersEntity, (user) => user.news)
+  user: UsersEntity;
 
   //   @OneToMany(() => CommentsEntity, (comments) => comments.news)
   //   comments: CommentsEntity[];

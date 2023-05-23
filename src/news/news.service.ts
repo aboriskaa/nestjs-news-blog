@@ -3,6 +3,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Comment } from './comments/comments.service';
 import { NewsEntity } from './news.entity';
+import { UsersEntity } from 'src/users/users.entity';
+import { UsersService } from 'src/users/users.service';
+import { CreateNewsDto } from './dtos/create-news-dto';
 
 export interface News {
   id?: string;
@@ -27,13 +30,16 @@ export class NewsService {
   constructor(
     @InjectRepository(NewsEntity)
     private newsRepository: Repository<NewsEntity>,
+    private usersService: UsersService,
   ) {}
 
-  async create(news: News): Promise<NewsEntity> {
+  async create(news: CreateNewsDto): Promise<NewsEntity> {
     const newsEntity = new NewsEntity();
     newsEntity.title = news.title;
     newsEntity.description = news.description;
     newsEntity.cover = news.cover;
+    const _user = await this.usersService.findById(parseInt(news.userId));
+    newsEntity.user = _user;
     return this.newsRepository.save(newsEntity);
   }
 

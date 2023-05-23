@@ -67,7 +67,7 @@ export class NewsController {
 
   @Get('/api/all')
   async getAll(): Promise<NewsEntity[]> {
-    return this.newsService.getAll();
+    return await this.newsService.getAll();
   }
 
   @Get('/api/:id')
@@ -129,7 +129,7 @@ export class NewsController {
 
     if (!news) {
       throw new HttpException(
-        { status: HttpStatus.NOT_FOUND, error: 'News wasnt found' },
+        { status: HttpStatus.NOT_FOUND, error: "News wasn't found" },
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
@@ -138,9 +138,8 @@ export class NewsController {
   }
 
   @Delete('/api/:id')
-  async remove(@Param('id') id: string): Promise<string> {
-    const idInt = parseInt(id);
-    const isRemoved = await this.newsService.remove(idInt);
+  async remove(@Param('id', ParseIntPipe) id: number): Promise<string> {
+    const isRemoved = await this.newsService.remove(id);
 
     throw new HttpException(
       {
