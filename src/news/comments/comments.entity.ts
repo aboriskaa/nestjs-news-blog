@@ -13,8 +13,8 @@ export class CommentsEntity {
   id: number;
   @Column('text')
   message: string;
-  @ManyToOne(() => UsersEntity, (user) => user.comments)
-  user: UsersEntity;
+  // @ManyToOne(() => UsersEntity, (user) => user.comments)
+  // user: UsersEntity;
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
   @UpdateDateColumn({ type: 'timestamp' })
